@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Phenomena Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated starfield background */
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Shooting stars */
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff, 0 0 20px #00f2fe;
+            animation: shoot 3s linear infinite;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-300px, 300px);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-size: 4em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%,
+            100% {
+                filter: brightness(1) drop-shadow(0 0 20px rgba(102, 126, 234, 0.3));
+            }
+            50% {
+                filter: brightness(1.2) drop-shadow(0 0 30px rgba(102, 126, 234, 0.6));
+            }
+        }
+
+        .tagline {
+            font-size: 1.4em;
+            color: #a0b3d8;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        /* Navigation */
+
+        nav {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 15px 30px;
+            margin: 0 auto 50px;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        nav a:hover {
+            background: rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 60px;
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            color: #b8c6db;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Phenomena Grid */
+
+        .phenomena-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .phenomenon-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .phenomenon-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(102, 126, 234, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .phenomenon-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border-color: rgba(102, 126, 234, 0.6);
+        }
+
+        .phenomenon-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+            text-align: center;
+            filter: drop-shadow(0 0 10px currentColor);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .card-title {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #fff;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-description {
+            color: #b8c6db;
+            line-height: 1.6;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            font-size: 1.05em;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(102, 126, 234, 0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+            z-index: 2;
+        }
+
+        /* Featured Section */
+
+        .featured {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .featured h2 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateX(10px);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .feature-item h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .feature-item p {
+            color: #b8c6db;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer p {
+            color: #7a8eb5;
+            margin-bottom: 10px;
+        }
+
+        .social-links {
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.5em;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #fff;
+            transform: scale(1.2);
+        }
+
+        /* Animations */
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+            .tagline {
+                font-size: 1em;
+            }
+            .phenomena-grid {
+                grid-template-columns: 1fr;
+            }
+            nav {
+                display: block;
+                width: 90%;
+            }
+            nav a {
+                display: block;
+                margin: 5px 0;
+            }
+        }
+
+        /* Loading animation */
+
+        .loader {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(102, 126, 234, 0.3);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 1000;
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* Quick stats */
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            padding: 30px;
+            margin: 40px auto;
+            max-width: 900px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #a0b3d8;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="loader" id="loader"></div>
+
+    <div class="container">
+        <header>
+            <h1>🌌 Cosmic Phenomena Explorer</h1>
+            <p class="tagline">Journey Through the Universe</p>
+            <nav>
+                <a href="#home">Home</a>
+                <a href="#simulations">Simulations</a>
+                <a href="#about">About</a>
+                <a href="#learn">Learn</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <p>Explore the wonders of the cosmos through interactive simulations. From solar systems to supernovas, experience astronomical phenomena like never before. Each simulation is scientifically accurate and designed to help you understand the universe.</p>
+            <a href="#simulations" class="cta-button">Start Exploring →</a>
+        </section>
+
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-number">9</div>
+                <div class="stat-label">Simulations</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Interactive</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Learning</div>
+            </div>
+        </div>
+
+        <section id="simulations">
+            <div class="phenomena-grid">
+                <a href="solar-system-3d.html" class="phenomenon-card" onclick="loadSimulation('solar-system')">
+                    <span class="card-badge">3D Interactive</span>
+                    <span class="card-icon">🌍</span>
+                    <h3 class="card-title">Solar System</h3>
+                    <p class="card-description">Explore the orbits and characteristics of planets in our cosmic neighborhood with full 3D controls</p>
+                </a>
+
+                <a href="eclipse-simulator-enhanced (1).html" class="phenomenon-card" onclick="loadSimulation('eclipse')">
+                    <span class="card-badge">Real-time</span>
+                    <span class="card-icon">🌑</span>
+                    <h3 class="card-title">Eclipses</h3>
+                    <p class="card-description">Witness solar and lunar eclipses with dedicated simulation modes and light curve analysis</p>
+                </a>
+
+                <a href="supernova-3d-simulator (1).html" class="phenomenon-card" onclick="loadSimulation('supernova')">
+                    <span class="card-badge">3D Explosive</span>
+                    <span class="card-icon">💥</span>
+                    <h3 class="card-title">Supernova</h3>
+                    <p class="card-description">Experience the spectacular death of massive stars through all evolution stages</p>
+                </a>
+
+                <a href="meteor.html" class="phenomenon-card" onclick="loadSimulation('meteor-shower')">
+                    <span class="card-badge">Animated</span>
+                    <span class="card-icon">☄️</span>
+                    <h3 class="card-title">Meteor Entry</h3>
+                    <p class="card-description">Watch cosmic debris transform from meteoroid to meteor to rare meteorite</p>
+                </a>
+
+                <a href="comet.html" class="phenomenon-card" onclick="loadSimulation('comets')">
+                    <span class="card-badge">Educational</span>
+                    <span class="card-icon">☄</span>
+                    <h3 class="card-title">Comets</h3>
+                    <p class="card-description">Follow the magnificent tails of icy wanderers and learn about their anatomy</p>
+                </a>
+
+                <a href="planetry.html" class="phenomenon-card" onclick="loadSimulation('transit')">
+                    <span class="card-badge">3D Transit</span>
+                    <span class="card-icon">🪐</span>
+                    <h3 class="card-title">Planetary Transit</h3>
+                    <p class="card-description">Observe planets crossing stars with real-time light curve visualization</p>
+                </a>
+
+                <a href="aurora.html" class="phenomenon-card" onclick="loadSimulation('aurora')">
+                    <span class="card-badge">Coming Soon</span>
+                    <span class="card-icon">🌈</span>
+                    <h3 class="card-title">Aurora</h3>
+                    <p class="card-description">Marvel at nature's light show created by solar wind interactions</p>
+                </a>
+
+                <a href="starbinary.html" class="phenomenon-card" onclick="loadSimulation('binary-star')">
+                    <span class="card-badge">Live Tracking</span>
+                    <span class="card-icon">⭐</span>
+                    <h3 class="card-title">Binary Star System</h3>
+                    <p class="card-description">Discover eclipsing binary stars with synchronized light curves</p>
+                </a>
+
+                <a href="tidal.html" class="phenomenon-card" onclick="loadSimulation('tidal')">
+                    <span class="card-badge">3D Rotatable</span>
+                    <span class="card-icon">🌊</span>
+                    <h3 class="card-title">Tidal Phenomena</h3>
+                    <p class="card-description">Understand gravitational forces shaping celestial bodies and ocean tides</p>
+                </a>
+
+
+                <a href="sun.html" class="phenomenon-card" onclick="loadSimulation('sun')">
+                    <span class="card-badge">structure</span>
+                    <span class="card-icon">☀ </span>
+                    <h3 class="card-title">Internal structure of sun</h3>
+                    <p class="card-description">The sun is the star at the center of our solar system.</p>
+                </a>
+
+                <a href="moon.html" class="phenomenon-card" onclick="loadSimulation('moon')">
+                    <span class="card-badge">diagram</span>
+                    <span class="card-icon">🌕</span>
+                    <h3 class="card-title">Moon</h3>
+                    <p class="card-description">The Moon is Earth's only natural satellite that reflects sunlight and influences tides and night light on our planet</p>
+                </a>
+
+                <a href="nasa.html" class="phenomenon-card" onclick="loadSimulation('nasa')">
+                    <span class="card-badge">Achievements</span>
+                    <span class="card-icon">🚀</span>
+                    <h3 class="card-title">NASA</h3>
+                    <p class="card-description">It is a united states government agency responsible for space exploration, scientific discoveries and aeronautics research </p>
+                </a>
+
+
+
+
+            </div>
+
+
+
+
+        </section>
+
+        <section class="featured">
+            <h2>✨ Features</h2>
+            <div class="featured-grid">
+                <div class="feature-item">
+                    <h3>🎮 Interactive Controls</h3>
+                    <p>Control speed, zoom, rotation, and view angles in real-time</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📊 Real Data</h3>
+                    <p>Scientifically accurate simulations based on astronomical data</p>
+                </div>
+                <div class="feature-item">
+                    <h3>🎓 Educational</h3>
+                    <p>Learn with detailed explanations and fascinating facts</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📱 Responsive</h3>
+                    <p>Works perfectly on desktop, tablet, and mobile devices</p>
+                </div>
+            </div>
+        </section>
+
+        <footer id="about">
+            <p>© 2025 Cosmic Phenomena Explorer</p>
+            <p>Expanding Human Understanding of the Universe</p>
+            <div class="social-links">
+                <a href="#" title="GitHub">🔗</a>
+                <a href="#" title="Twitter">🐦</a>
+                <a href="#" title="Email">📧</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Create starfield
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.width = (Math.random() * 2 + 1) + 'px';
+                star.style.height = star.style.width;
+                starsContainer.appendChild(star);
+            }
+
+            // Add shooting stars
+            for (let i = 0; i < 5; i++) {
+                const shootingStar = document.createElement('div');
+                shootingStar.className = 'shooting-star';
+                shootingStar.style.left = Math.random() * 100 + '%';
+                shootingStar.style.top = Math.random() * 50 + '%';
+                shootingStar.style.animationDelay = Math.random() * 5 + 's';
+                shootingStar.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                starsContainer.appendChild(shootingStar);
+            }
+        }
+
+        createStars();
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                if (this.getAttribute('href') !== 'javascript:void(0)') {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Load simulation (in a real implementation, these would load separate pages)
+        function loadSimulation(type) {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block';
+
+            // Simulate loading
+            setTimeout(() => {
+                loader.style.display = 'none';
+
+                // In a real implementation, you would navigate to the actual pages
+                // For now, show an alert with information
+                const messages = {
+                    'solar-system': 'Loading 3D Solar System Explorer...\n\nFeatures:\n• Interactive 3D rotation\n• Planet information cards\n• Speed controls\n• Orbital mechanics',
+                    'eclipse': 'Loading Eclipse Simulator...\n\nFeatures:\n• Solar & lunar eclipses\n• Dedicated simulation modes\n• Light curve tracking\n• Blood Moon effects',
+                    'supernova': 'Loading Supernova Simulator...\n\nFeatures:\n• All 6 evolution stages\n• 3D particle system\n• Real-time statistics\n• Speed controls',
+                    'meteor-shower': 'Loading Meteor Entry Simulation...\n\nFeatures:\n• Atmospheric layers\n• Transformation stages\n• Variable speed control\n• Educational labels',
+                    'comets': 'Loading Comet Explorer...\n\nFeatures:\n• Interactive 3D orbit\n• Anatomy breakdown\n• Highlight components\n• Fun facts',
+                    'transit': 'Loading Planetary Transit...\n\nFeatures:\n• 3D perspective view\n• Real-time light curve\n• Rotation controls\n• Scientific data',
+                    'aurora': 'Aurora simulation coming soon!\n\nWill feature:\n• Solar wind particles\n• Magnetic field lines\n• Atmospheric interactions\n• Color variations',
+                    'binary-star': 'Loading Binary Star System...\n\nFeatures:\n• Eclipsing binaries\n• Live light curve\n• Phase indicators\n• 3D orbital view',
+                    'tidal': 'Loading Tidal Phenomena...\n\nFeatures:\n• 3D drag rotation\n• Moon phases\n• Spring/neap tides\n• Wave animations'
+                };
+
+                alert(messages[type] || 'Loading simulation...');
+
+                // In production, you would do:
+                // window.location.href = type + '.html';
+            }, 800);
+        }
+
+        // Add hover effects to cards
+        document.querySelectorAll('.phenomenon-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+
+        // Parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const stars = document.getElementById('stars');
+            stars.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.phenomenon-card, .feature-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+    <!-- Code injected by live-server -->
+    <script>
+        // <![CDATA[  <-- For SVG support
+        if ('WebSocket' in window) {
+            (function() {
+                function refreshCSS() {
+                    var sheets = [].slice.call(document.getElementsByTagName("link"));
+                    var head = document.getElementsByTagName("head")[0];
+                    for (var i = 0; i < sheets.length; ++i) {
+                        var elem = sheets[i];
+                        var parent = elem.parentElement || head;
+                        parent.removeChild(elem);
+                        var rel = elem.rel;
+                        if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+                            var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+                            elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+                        }
+                        parent.appendChild(elem);
+                    }
+                }
+                var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+                var address = protocol + window.location.host + window.location.pathname + '/ws';
+                var socket = new WebSocket(address);
+                socket.onmessage = function(msg) {
+                    if (msg.data == 'reload') window.location.reload();
+                    else if (msg.data == 'refreshcss') refreshCSS();
+                };
+                if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+                    console.log('Live reload enabled.');
+                    sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+                }
+            })();
+        } else {
+            console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+        }
+        // ]]>
+    </script>
+</body>
+
+</html>
