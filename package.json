@@ -1,0 +1,16 @@
+{
+  "name": "good-citizen-platform",
+  "version": "1.0.0",
+  "description": "Civic violation reporting and reward platform",
+  "private": true,
+  "scripts": {
+    "install-all": "cd backend && npm install && cd ../frontend && npm install",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm start",
+    "seed": "cd backend && npm run seed",
+    "dev": "echo 'Run npm run backend and npm run frontend in separate terminals'"
+  },
+  "keywords": ["civic", "reporting", "rewards", "community"],
+  "author": "",
+  "license": "MIT"
+}
